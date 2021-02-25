@@ -13,6 +13,8 @@ our( @EXPORT, @EXPORT_OK, %EXPORT_TAGS );
 
 our $VERSION = '0.901';
 
+=encoding utf8
+
 =head1 NAME
 
 Antsy - Streaming ANSI escape sequences
@@ -54,7 +56,7 @@ I don't really know what this does.
 
 =item * L<Term::ANSIScreen>
 
-=cut
+=back
 
 =head2 Methods
 
