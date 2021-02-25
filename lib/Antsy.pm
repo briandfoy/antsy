@@ -103,9 +103,28 @@ Make the background the named color
 Make the background the named color and bright (however your terminal
 does that).
 
+=item * blink
+
+Make the text blink (however your terminal does that).
+
 =item * bold
 
 Turn on bold
+
+=item * clear_line
+
+=item * clear_screen
+
+=item * clear_to_line_end
+
+=item * clear_to_line_start
+
+=item * clear_to_screen_end
+
+=item * clear_to_screen_start
+
+Clear the part of the screen as indicated. Each of these start at the
+current cursor position.
 
 =item * conceal
 
