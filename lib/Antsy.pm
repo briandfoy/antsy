@@ -349,7 +349,7 @@ BEGIN {
 	foreach my $group ( @groups ) {
 		no strict 'refs';
 		foreach my $i ( 0 .. 2 ) {
-			my $name = sprintf $template[$i], $group[1];
+			my $name = sprintf $templates[$i], $group->[1];
 			my $value = _seq( $group->[0], $i );
 			*{$name} = sub () { $value };
 			_export( $name, 'clear' );
