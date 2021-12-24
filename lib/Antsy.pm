@@ -365,7 +365,7 @@ BEGIN {
 		[ qw( K line  ) ],
 		);
 
-	my @templates = ( 'clear_%s', 'clear_to_%s_end', 'clear_to_%s_start' );
+	my @templates = ( 'clear_to_%s_end', 'clear_to_%s_start', 'clear_%s' );
 
 	foreach my $group ( @groups ) {
 		no strict 'refs';
