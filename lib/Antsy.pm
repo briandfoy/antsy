@@ -732,7 +732,28 @@ Play with the dock icon.
 
 =item * yes - bounce the dock indefinitely
 
+=back
+
 =cut
+
+=item * iterm_bounce_dock_icon
+
+Bounce the Dock icon, continuously
+
+=item * iterm_bounce_dock_icon_once
+
+Bounce the Dock icon, only once
+
+=item * iterm_unbounce_dock_icon
+
+Stop bouncing the Dock icon
+
+=item * iterm_fireworks
+
+Show animated fireworks.
+
+=cut
+
 
 # OSC 1337 ; RequestAttention=[value] ST
 sub iterm_attention ( $value ) {
