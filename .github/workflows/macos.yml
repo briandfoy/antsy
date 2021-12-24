@@ -3,12 +3,18 @@ name: macos
 on:
     push:
         branches:
-            - '*'
+            - '**'
+            - '!**windows**'
+            - '!**linux**'
         tags-ignore:
+            # I tag release pushes but those should have already been tested
             - 'release-*'
         paths-ignore:
+            # list all the files which are irrelevant to the tests
+            # non-code, support files, docs, etc
             - '.appveyor.yml'
-            - '.github/**'
+            - '.github/workflows/ubuntu.yml'
+            - '.github/workflows/windows.yml'
             - '.gitignore'
             - '.releaserc'
             - 'Changes'
@@ -31,8 +37,7 @@ jobs:
             - name: Prepare cpan
               run: |
                 openssl version
-                cpan IO::Socket::SSL
-                cpan -M https://www.cpan.org -T ExtUtils::MakeMaker
+                cpan -M http://www.cpan.org -T ExtUtils::MakeMaker IO::Socket::SSL LWP::Protocol::https
             - name: Install dependencies
               run: |
                 cpan -M https://www.cpan.org -T .
@@ -48,3 +53,10 @@ jobs:
               run: |
                 perl Makefile.PL
                 make disttest
+            - name: Run coverage tests
+              if: env.PERL_VERSION != 'v5.8'
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                cpan -M https://www.cpan.org -T Devel::Cover Devel::Cover::Report::Coveralls
+                cover -test -report coveralls
