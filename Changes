@@ -1,5 +1,8 @@
 # Changes for Antsy
 
+0.902 2021-12-24T16:06:36Z
+	ki3v sent a correction for the ordering of the clear_* numbers. Github #1
+
 0.901 2021-02-25T20:33:25Z
 	* First release.
 
