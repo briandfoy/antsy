@@ -5,7 +5,6 @@
 image:
   - Visual Studio 2019
   - Visual Studio 2022
-  - ubuntu2204
 
 environment:
   PERL5LIB: /home/appveyor/perl5/lib/perl5
