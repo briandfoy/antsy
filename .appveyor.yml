@@ -31,7 +31,8 @@ install:
   - perl -v
   - cpan -M https://www.cpan.org -T App::cpanminus ExtUtils::MakeMaker
   - cmd: cpanm --notest --installdeps .
-  - sh: cpanm --local-lib=/home/appveyor/perl5 --notest --installdeps .
+  - sh: cpanm --verbose --local-lib=/home/appveyor/perl5 --notest --installdeps .
+  - sh: cat /home/appveyor/.cpanm/work/*/build.log
 
 build_script:
   - perl Makefile.PL
