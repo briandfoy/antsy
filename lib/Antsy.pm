@@ -1,4 +1,4 @@
-use v5.32;
+use v5.26;
 
 package Antsy;
 use strict;
