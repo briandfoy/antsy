@@ -5,8 +5,7 @@
 image:
   - Visual Studio 2019
   - Visual Studio 2022
-  - ubuntu1804
-  - ubuntu2004
+  - Ubuntu2004
 
 environment:
   PERL5LIB: /home/appveyor/perl5/lib/perl5
@@ -31,7 +30,8 @@ install:
   - perl -v
   - cpan -M https://www.cpan.org -T App::cpanminus ExtUtils::MakeMaker
   - cmd: cpanm --notest --installdeps .
-  - sh: cpanm --local-lib=/home/appveyor/perl5 --notest --installdeps .
+  - sh: cpanm --verbose --local-lib=/home/appveyor/perl5 --notest --installdeps .
+  - sh: cat /home/appveyor/.cpanm/work/*/build.log
 
 build_script:
   - perl Makefile.PL
