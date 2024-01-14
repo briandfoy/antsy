@@ -1,5 +1,8 @@
 # Changes for Antsy
 
+0.905 2024-01-14T05:00:23Z
+	* fix extra file in MANIFEST (#11)
+
 0.904 2024-01-07T22:57:43Z
 	* refresh distro
 
