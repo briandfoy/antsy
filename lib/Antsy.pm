@@ -11,7 +11,7 @@ use Exporter qw(import);
 
 our( @EXPORT, @EXPORT_OK, %EXPORT_TAGS );
 
-our $VERSION = '0.906';
+our $VERSION = '0.907';
 
 =encoding utf8
 
