@@ -141,6 +141,29 @@ Nothing in this list is done yet.
   * A reply parser that's tested without a terminal.
   * Maybe a fallback that reads `COLORFGBG` (palette numbers such as
     `15;0`, set by rxvt and Konsole).
+* Pick contrasting colors, building on the color queries above. Use the
+  WCAG math:
+  * Relative luminance (0 for black, 1 for white): scale each channel
+    to 0-1, linearize it (`c <= 0.04045 ? c/12.92 :
+    ((c+0.055)/1.055)**2.4`), then `0.2126*R + 0.7152*G + 0.0722*B`.
+  * Contrast ratio: `(L_lighter + 0.05) / (L_darker + 0.05)`, from 1:1
+    to 21:1. WCAG wants at least 4.5:1 for normal text, 3:1 for large
+    text, and 7:1 for AAA.
+  * Dark or light background: compare the background's contrast with
+    black and with white, and go with the higher one.
+  * Accent colors: keep the hue and change only the lightness until the
+    color reaches 4.5:1 against the background, darker on light
+    backgrounds and lighter on dark ones. Adjust in a perceptual space
+    (OKLCH, or HSL in a pinch) so the hue still looks right. This is the
+    "yellow on white" problem.
+  * Possible helpers: `luminance( R, G, B )`,
+    `contrast_ratio( RGB1, RGB2 )`, `is_dark_background()`, and
+    `readable_color( RGB, BG_RGB )`.
+  * The catch: the named ANSI colors (`text_yellow` and friends) have no
+    fixed RGB, because the terminal's theme remaps them. To check one,
+    query the palette entry with `OSC 4 ; N ; ?` (xterm-style
+    terminals answer with its RGB). Otherwise, emit computed colors with
+    `text_rgb`, which needs true color but is predictable.
 * Fix `iterm_fg_color` and `iterm_bg_color`: `_iterm_query` has no
   timeout, so it hangs if no answer comes, and it recognizes only BEL as
   the end of the reply, not `ESC \`. Moving them onto the same code as
