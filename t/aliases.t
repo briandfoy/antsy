@@ -14,6 +14,11 @@ my @fixed_groups = (
 	[ qw( reverse inverse reverse_video ) ],
 	[ qw( normal_intensity no_bold no_dark no_dim no_faint ) ],
 	[ qw( no_reverse no_inverse no_reverse_video ) ],
+	[ qw( conceal hidden ) ],
+
+	# colors
+	[ qw( text_bright_black text_gray text_grey ) ],
+	[ qw( bg_bright_black bg_gray bg_grey ) ],
 
 	# showing and hiding the cursor
 	[ qw( hide_cursor cursor_hide ) ],

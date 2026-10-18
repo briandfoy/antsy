@@ -105,6 +105,12 @@ Make the background the named color
 Make the background the named color and bright (however your terminal
 does that).
 
+=item * bg_gray
+
+=item * bg_grey
+
+The same as C<bg_bright_black>, which most people call gray.
+
 =item * bg_default
 
 Go back to the terminal's default background color (SGR 49). Unlike
@@ -135,7 +141,10 @@ current cursor position.
 
 =item * conceal
 
-Make the text invisible (if your terminal handles that).
+=item * hidden
+
+Make the text invisible (if your terminal handles that). Show it again
+with C<reveal>.
 
 =item * cursor_back( [ N ] )
 
@@ -413,6 +422,12 @@ Make foreground text the named color.
 
 Make foreground text the named color and bright (however your terminal
 does that).
+
+=item * text_gray
+
+=item * text_grey
+
+The same as C<text_bright_black>, which most people call gray.
 
 =item * text_default
 
@@ -699,6 +714,7 @@ BEGIN {
 		[ qw( text    inverse        m    7 ) ],
 		[ qw( text    reverse_video  m    7 ) ],
 		[ qw( text    conceal        m    8 ) ],
+		[ qw( text    hidden         m    8 ) ],
 		[ qw( text    normal_intensity m 22 ) ],
 		[ qw( text    no_bold        m   22 ) ],
 		[ qw( text    no_dark        m   22 ) ],
@@ -779,6 +795,20 @@ BEGIN {
 			# own bright tag.
 			_export( $name, $group->[0] );
 			push $EXPORT_TAGS{bright}->@*, $name if $group->[1] eq 'bright';
+			}
+		}
+
+	# Most people call bright black gray (or grey), so give it those
+	# names too. Copy the value from the bright_black sub so they can't
+	# drift apart.
+	foreach my $prefix ( qw( text bg ) ) {
+		no strict 'refs';
+		my $value = __PACKAGE__->can( "${prefix}_bright_black" )->();
+		foreach my $spelling ( qw( gray grey ) ) {
+			my $name = "${prefix}_$spelling";
+			*{$name} = sub () { $value };
+			_export( $name, $prefix );
+			push $EXPORT_TAGS{bright}->@*, $name;
 			}
 		}
 

@@ -41,7 +41,8 @@ excluded from the distribution (see MANIFEST.SKIP).
 ## Naming conventions
 
 * Colors have a `text_` or `bg_` prefix: `text_red`, `bg_bright_blue`,
-  `text_256`, `text_rgb`, `text_default`.
+  `text_256`, `text_rgb`, `text_default`. `text_gray`/`text_grey` and
+  `bg_gray`/`bg_grey` are aliases for the bright_black colors.
 * Attributes have bare names: `bold`, `faint`, `italic`, `underline`,
   `blink`, `inverse`, `conceal`. Turning one off is `no_NAME`, plus
   `normal_intensity` (SGR 22) and `reveal` (SGR 28).
@@ -119,8 +120,6 @@ Nothing in this list is done yet.
 
 * Scroll regions: `scroll_region( TOP, BOTTOM )` (DECSTBM) and
   `scroll_region_reset`, maybe origin mode on and off.
-* Aliases: `text_gray`, `text_grey`, `bg_gray`, `bg_grey` for the
-  bright_black colors, and `hidden` for `conceal`.
 * The iTerm2 cursor shape functions don't check that they're running in
   iTerm2, unlike the other iTerm2 functions.
 * Runtime deprecation warnings for the old cursor names.

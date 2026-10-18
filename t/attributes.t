@@ -20,6 +20,7 @@ my %attributes = (
 	inverse          =>  7,
 	reverse_video    =>  7,
 	conceal          =>  8,
+	hidden           =>  8,
 	normal_intensity => 22,
 	no_bold          => 22,
 	no_dark          => 22,

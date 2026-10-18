@@ -7,10 +7,15 @@ BAIL_OUT( "Bail out! $class did not compile\n" ) unless use_ok( $class );
 my @basic_colors = qw( black red green yellow blue magenta cyan white );
 my @extra_colors = qw( orange );
 
+# gray and grey are aliases for bright black, so they're bright colors
+my @gray_names = map { ( "text_$_", "bg_$_" ) } qw( gray grey );
+
 my @names = (
 	( map { ( "text_$_", "bg_$_", "text_bright_$_", "bg_bright_$_" ) } @basic_colors ),
 	( map { ( "text_$_", "bg_$_" ) } @extra_colors ),
+	@gray_names,
 	);
+my %is_bright = map { $_ => 1 } @gray_names, grep { /_bright_/ } @names;
 
 my %exportable = map { $_ => 1 } @Antsy::EXPORT_OK;
 
@@ -34,7 +39,7 @@ subtest 'export tags' => sub {
 		my( $tag ) = $name =~ /\A(text|bg)_/;
 		ok( $in_tag{$tag}{$name}, "$name is in :$tag" );
 		ok( $in_tag{all}{$name},  "$name is in :all" );
-		next unless $name =~ /_bright_/;
+		next unless $is_bright{$name};
 		ok( $in_tag{bright}{$name}, "$name is in :bright" );
 		}
 
