@@ -202,6 +202,14 @@ Move the cursor up N lines, to the start of the line
 
 Move the cursor to row N and column M. Both default to 1.
 
+=item * cursor_tab_back( [ N ] )
+
+Move the cursor back N tab stops (CBT, C<CSI N Z>).
+
+=item * cursor_tab_forward( [ N ] )
+
+Move the cursor forward N tab stops (CHT, C<CSI N I>).
+
 =item * cursor_up( [ N ] )
 
 Move the cursor up N lines.
@@ -681,6 +689,8 @@ BEGIN {
 		[ 'cursor',   'next_line',     'E',     $start_of_line ],
 		[ 'cursor',   'previous_line', 'F',     $start_of_line ],
 		[ 'cursor',   'row',           'd',     $first_row     ],
+		[ 'cursor',   'tab_back',      'Z',     ''             ],
+		[ 'cursor',   'tab_forward',   'I',     ''             ],
 		[ 'cursor',   'up',            'A',     ''             ],
 		[ 'scroll',   'down',          'T',     ''             ],
 		[ 'scroll',   'up',            'S',     ''             ],
