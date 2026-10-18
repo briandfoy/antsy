@@ -105,6 +105,11 @@ Make the background the named color
 Make the background the named color and bright (however your terminal
 does that).
 
+=item * bg_default
+
+Go back to the terminal's default background color (SGR 49). Unlike
+C<reset>, this leaves the text color and attributes alone.
+
 =item * blink
 
 Make the text blink (however your terminal does that).
@@ -239,6 +244,35 @@ Hide the cursor. See also C<show_cursor>.
 
 Turn on italic.
 
+=item * no_blink
+
+Turn off blinking (SGR 25).
+
+=item * no_bold
+
+=item * no_dark
+
+=item * normal_intensity
+
+Turn off bold and dark (SGR 22). These are all the same: terminals have
+no way to turn off just one of bold and dark, so each of these turns
+off both.
+
+Some terminals treat SGR 21 as "bold off", but the standard says SGR 21
+is double underline, so Antsy doesn't use it.
+
+=item * no_italic
+
+Turn off italic (SGR 23).
+
+=item * no_reverse
+
+Turn off reverse video (SGR 27).
+
+=item * no_underline
+
+Turn off underlining (SGR 24).
+
 =item * reset
 
 Turn off all attributes
@@ -246,6 +280,10 @@ Turn off all attributes
 =item * restore_cursor
 
 Put the cursor back to where you saved it. See also C<save_cursor>.
+
+=item * reveal
+
+Show text hidden by C<conceal> (SGR 28).
 
 =item * reverse
 
@@ -314,6 +352,11 @@ Make foreground text the named color.
 
 Make foreground text the named color and bright (however your terminal
 does that).
+
+=item * text_default
+
+Go back to the terminal's default text color (SGR 39). Unlike C<reset>,
+this leaves the background color and attributes alone.
 
 =item * underline
 
@@ -492,6 +535,16 @@ BEGIN {
 		[ qw( text    blink          m    5 ) ],
 		[ qw( text    reverse        m    7 ) ],
 		[ qw( text    conceal        m    8 ) ],
+		[ qw( text    normal_intensity m 22 ) ],
+		[ qw( text    no_bold        m   22 ) ],
+		[ qw( text    no_dark        m   22 ) ],
+		[ qw( text    no_italic      m   23 ) ],
+		[ qw( text    no_underline   m   24 ) ],
+		[ qw( text    no_blink       m   25 ) ],
+		[ qw( text    no_reverse     m   27 ) ],
+		[ qw( text    reveal         m   28 ) ],
+		[ qw( text    text_default   m   39 ) ],
+		[ qw( bg      bg_default     m   49 ) ],
 		[ qw( cursor  save_cursor    s      ) ],
 		[ qw( cursor  restore_cursor u      ) ],
 		[ qw( cursor  hide_cursor    l  ?25 ) ],

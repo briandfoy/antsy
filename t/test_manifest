@@ -1,4 +1,5 @@
 load.t
+attributes.t
 cursor.t
 erase.t
 colors.t
