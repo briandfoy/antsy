@@ -204,14 +204,6 @@ counts as 0.
 
 Hide the cursor. See also C<cursor_show>.
 
-=item * cursor_restore
-
-Put the cursor back to where you saved it. See also C<cursor_save>.
-
-=item * cursor_save
-
-Save the current location of the cursor. See also C<cursor_restore>.
-
 =item * cursor_show
 
 Show the cursor. See also C<cursor_hide>.
@@ -351,10 +343,6 @@ named C<reset> would replace Perl's built-in C<reset> in your program,
 so it isn't in C<@EXPORT_OK> or any export tag. Use C<reset_all> or
 C<normal>, or call it with its full name, C<Antsy::reset()>.
 
-=item * restore_cursor
-
-Deprecated. Use C<cursor_restore> instead.
-
 =item * reveal
 
 Show text hidden by C<conceal> (SGR 28).
@@ -366,10 +354,6 @@ named C<reverse> would replace Perl's built-in C<reverse> in your
 program, so C<reverse @list> would stop working. It isn't in
 C<@EXPORT_OK> or any export tag. Use C<inverse> or C<reverse_video>,
 or call it with its full name, C<Antsy::reverse()>.
-
-=item * save_cursor
-
-Deprecated. Use C<cursor_save> instead.
 
 =item * scroll_down( [ N ] )
 
@@ -438,6 +422,88 @@ C<reset_all>, this leaves the background color and attributes alone.
 =item * underline
 
 Turn on underlining.
+
+=back
+
+=head2 Saving and restoring the cursor
+
+Terminals have two ways to save the cursor and come back to it later:
+the DEC way and the SCO way. Each has only one save slot, so saving
+again replaces whatever you saved before; you can't nest them.
+
+The DEC versions are the ones to use. They work in essentially every
+terminal, and they're what terminfo's C<sc> and C<rc> capabilities
+(C<tput sc>) send for most terminals. The SCO versions are less
+predictable: some terminals save only the position, others (such as
+xterm and the VT510) save the same things as the DEC versions, some
+terminals ignore them, and in terminals with left and right margins
+turned on, C<CSI s> sets the margins instead.
+
+For the details, see the VT510 reference pages for
+L<DECSC|https://vt100.net/docs/vt510-rm/DECSC.html>,
+L<DECRC|https://vt100.net/docs/vt510-rm/DECRC.html>,
+L<SCOSC|https://vt100.net/docs/vt510-rm/SCOSC.html>, and
+L<SCORC|https://vt100.net/docs/vt510-rm/SCORC.html>, and
+L<XTerm Control Sequences|https://invisible-island.net/xterm/ctlseqs/ctlseqs.html>,
+which also covers the conflict between C<CSI s> and setting the left
+and right margins.
+
+The saved position is a screen position. If the screen scrolls between
+saving and restoring, the cursor comes back to the same row of the
+screen, which may now show a different line.
+
+=over 4
+
+=item * cursor_save_state
+
+=item * cursor_save_dec
+
+=item * cursor_save_all
+
+=item * decsc
+
+Save the cursor position, along with the current text attributes,
+character sets, origin mode, and a few other settings
+(L<DECSC|https://vt100.net/docs/vt510-rm/DECSC.html>, C<ESC 7>).
+Restore it with C<cursor_restore_state> or any of its other names.
+
+=item * cursor_restore_state
+
+=item * cursor_restore_dec
+
+=item * cursor_restore_all
+
+=item * decrc
+
+Put the cursor back where C<cursor_save_state> saved it, and restore
+the attributes saved with it
+(L<DECRC|https://vt100.net/docs/vt510-rm/DECRC.html>, C<ESC 8>).
+
+=item * cursor_save
+
+=item * cursor_save_position
+
+Save the cursor position the SCO way
+(L<SCOSC|https://vt100.net/docs/vt510-rm/SCOSC.html>, C<CSI s>). What
+else gets saved depends on the terminal. Prefer C<cursor_save_state>.
+
+=item * cursor_restore
+
+=item * cursor_restore_position
+
+Put the cursor back where C<cursor_save> saved it, the SCO way
+(L<SCORC|https://vt100.net/docs/vt510-rm/SCORC.html>, C<CSI u>).
+Prefer C<cursor_restore_state>.
+
+=item * save_cursor
+
+Deprecated. Use C<cursor_save> (the same SCO sequence) or, better,
+C<cursor_save_state>.
+
+=item * restore_cursor
+
+Deprecated. Use C<cursor_restore> (the same SCO sequence) or, better,
+C<cursor_restore_state>.
 
 =back
 
@@ -647,12 +713,8 @@ BEGIN {
 		[ qw( text    reveal         m   28 ) ],
 		[ qw( text    text_default   m   39 ) ],
 		[ qw( bg      bg_default     m   49 ) ],
-		[ qw( cursor  save_cursor    s      ) ],
-		[ qw( cursor  restore_cursor u      ) ],
 		[ qw( cursor  hide_cursor    l  ?25 ) ],
 		[ qw( cursor  show_cursor    h  ?25 ) ],
-		[ qw( cursor  cursor_save    s      ) ],
-		[ qw( cursor  cursor_restore u      ) ],
 		[ qw( cursor  cursor_hide    l  ?25 ) ],
 		[ qw( cursor  cursor_show    h  ?25 ) ],
 		);
@@ -667,6 +729,28 @@ BEGIN {
 		*{$name} = sub () { $value };
 
 		_export( $name, $export_tag ) unless $shadows_builtin{$name};
+		}
+	}
+
+# Saving and restoring the cursor. See "Saving and restoring the
+# cursor" in the docs for the difference between the DEC and SCO
+# versions.
+BEGIN {
+	my @groups = (
+		# SEQUENCE                     NAMES
+		[ "\x1b7",       qw( cursor_save_state    cursor_save_dec    cursor_save_all    decsc ) ], # DECSC
+		[ "\x1b8",       qw( cursor_restore_state cursor_restore_dec cursor_restore_all decrc ) ], # DECRC
+		[ _seq( 's' ),   qw( cursor_save    cursor_save_position    save_cursor    ) ],         # SCOSC
+		[ _seq( 'u' ),   qw( cursor_restore cursor_restore_position restore_cursor ) ],         # SCORC
+		);
+
+	foreach my $group ( @groups ) {
+		no strict 'refs';
+		my( $value, @names ) = @$group;
+		foreach my $name ( @names ) {
+			*{$name} = sub () { $value };
+			_export( $name, 'cursor' );
+			}
 		}
 	}
 

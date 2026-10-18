@@ -56,10 +56,22 @@ foreach my $name ( qw( cursor_row_column cursor_position ) ) {
 my %fixed = (
 	cursor_home       => "\e[1;1H",
 	cursor_line_start => $start_of_line,
-	save_cursor       => "\e[s",
-	cursor_save       => "\e[s",
-	restore_cursor    => "\e[u",
-	cursor_restore    => "\e[u",
+	# DEC save and restore
+	cursor_save_state       => "\e7",
+	cursor_save_dec         => "\e7",
+	cursor_save_all         => "\e7",
+	decsc                   => "\e7",
+	cursor_restore_state    => "\e8",
+	cursor_restore_dec      => "\e8",
+	cursor_restore_all      => "\e8",
+	decrc                   => "\e8",
+	# SCO save and restore
+	save_cursor             => "\e[s",
+	cursor_save             => "\e[s",
+	cursor_save_position    => "\e[s",
+	restore_cursor          => "\e[u",
+	cursor_restore          => "\e[u",
+	cursor_restore_position => "\e[u",
 	hide_cursor       => "\e[?25l",
 	cursor_hide       => "\e[?25l",
 	show_cursor       => "\e[?25h",
@@ -99,9 +111,10 @@ sequence, because terminals treat that as 1.
 
 Also checks the absolute moves C<cursor_row_column> and
 C<cursor_position>, the fixed moves C<cursor_home> and
-C<cursor_line_start>, and saving, restoring, hiding, and showing the
-cursor under both of their names (such as C<hide_cursor> and
-C<cursor_hide>).
+C<cursor_line_start>, hiding and showing the cursor under both of
+their names (such as C<hide_cursor> and C<cursor_hide>), and every
+name for saving and restoring the cursor, both the DEC versions (such
+as C<cursor_save_state>) and the SCO versions (such as C<cursor_save>).
 
 =head1 SOURCE AVAILABILITY
 
