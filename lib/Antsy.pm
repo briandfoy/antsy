@@ -168,13 +168,61 @@ TK: Fill in details
 
 Make the text dark (however your terminal does that).
 
-=item * erase_in_display( [ 0, 1, 2, 3 ] )
+=item * erase_in_display( [ N ] )
 
-TK: Fill in details
+Erase part of the screen (ED, C<CSI N J>). The cursor doesn't move.
+N defaults to 0:
 
-=item * erase_in_line( [ 0, 1, 2, 3 ] )
+=over 4
 
-TK: Fill in details
+=item * 0 - from the cursor to the end of the screen
+
+=item * 1 - from the start of the screen to the cursor
+
+=item * 2 - the whole screen
+
+=item * 3 - the whole screen and the scrollback buffer (an xterm
+extension that most terminals support)
+
+=back
+
+Any other value carps and returns the empty string.
+
+=item * erase_in_line( [ N ] )
+
+Erase part of the current line (EL, C<CSI N K>). The cursor doesn't
+move. N defaults to 0:
+
+=over 4
+
+=item * 0 - from the cursor to the end of the line
+
+=item * 1 - from the start of the line to the cursor
+
+=item * 2 - the whole line
+
+=back
+
+Any other value carps and returns the empty string.
+
+=item * erase_line
+
+=item * erase_screen
+
+=item * erase_screen_and_scrollback
+
+=item * erase_to_end_of_line
+
+=item * erase_to_end_of_screen
+
+=item * erase_to_start_of_line
+
+=item * erase_to_start_of_screen
+
+Shortcuts for C<erase_in_display> and C<erase_in_line> with each of
+their arguments, so you don't have to remember the numbers. For
+example, C<erase_to_end_of_screen> is C<erase_in_display(0)> and
+C<erase_line> is C<erase_in_line(2)>.
 
 =item * hide_cursor
 
@@ -283,11 +331,14 @@ sub _256 ( $i, $n ) {
 
 sub _bg () { 48 }  # a magic number that applies the SGR to the background
 
-sub _erase ( $n, $command ) {
-	carp "Bad value <$n>. Should be 0, 1, or 2"
-		unless grep { $_ == $n } qw(0 1 2);
-	carp "Bad erase command <$command>. Should be J or K"
-		unless grep { $_ == $n } qw(0 1 2);
+# _erase forms an erase sequence (J for the display, K for the line).
+# An argument that isn't allowed carps and returns the empty string,
+# since erasing nothing is safer than erasing the wrong part.
+sub _erase ( $command, $n, @allowed ) {
+	unless( grep { $n eq $_ } @allowed ) {
+		carp "Bad erase value <$n>. Should be one of <@allowed>";
+		return '';
+		}
 	_seq( $command, $n );
 	}
 
@@ -330,6 +381,32 @@ sub bg_256   ( $n         ) { _256( _bg(), $n ) }
 sub bg_rgb   ( $r, $g, $b ) { _rgb( _bg(), $r, $g, $b ) }
 
 sub cursor_row_column ( $n = 1, $m = 1 ) { _seq( 'H', $n, $m ) }
+
+sub erase_in_display ( $n = 0 ) { _erase( 'J', $n, 0 .. 3 ) }
+sub erase_in_line    ( $n = 0 ) { _erase( 'K', $n, 0 .. 2 ) }
+
+# Named shortcuts for each erase_in_display and erase_in_line argument,
+# so nobody has to remember the numbers.
+BEGIN {
+	my @helpers = (
+		# NAME                              SUB               ARG
+		[ qw( erase_to_end_of_screen        erase_in_display  0 ) ],
+		[ qw( erase_to_start_of_screen      erase_in_display  1 ) ],
+		[ qw( erase_screen                  erase_in_display  2 ) ],
+		[ qw( erase_screen_and_scrollback   erase_in_display  3 ) ],
+		[ qw( erase_to_end_of_line          erase_in_line     0 ) ],
+		[ qw( erase_to_start_of_line        erase_in_line     1 ) ],
+		[ qw( erase_line                    erase_in_line     2 ) ],
+		);
+
+	foreach my $helper ( @helpers ) {
+		no strict 'refs';
+		my( $name, $sub, $n ) = @$helper;
+		my $value = __PACKAGE__->can( $sub )->( $n );
+		*{$name} = sub () { $value };
+		_export( $name, 'erase' );
+		}
+	}
 
 sub text_256 ( $n         ) { _256( _text(), $n ) }
 sub text_rgb ( $r, $g, $b ) { _rgb( _text(), $r, $g, $b ) }
