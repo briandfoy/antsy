@@ -759,7 +759,6 @@ BEGIN {
 	my %colors = map { state $n = 0; $_ => $n++ } @colors;
 
 	my @groups = (
-		[   (   0, '',       '%s' ) ],
 		[ qw(  30 text        %s  ) ],
 		[ qw(  90 text bright %s  ) ],
 		[ qw(  40 bg          %s  ) ],

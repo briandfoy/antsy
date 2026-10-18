@@ -24,6 +24,14 @@ foreach my $name ( @names ) {
 		};
 	}
 
+subtest 'no bare color names with a leading underscore' => sub {
+	foreach my $color ( @basic_colors ) {
+		my $name = "_$color";
+		ok( ! defined &{"${class}::$name"}, "$name is not defined" );
+		ok( ! $exportable{$name}, "$name is not in \@EXPORT_OK" );
+		}
+	};
+
 done_testing();
 
 __END__
@@ -45,6 +53,10 @@ C<text_bright_>, and C<bg_bright_> functions, and for each secondary
 color (orange), checks the C<text_> and C<bg_> functions. Each one must
 be defined, be listed in C<@EXPORT_OK>, and return an SGR escape
 sequence (C<CSI ... m>).
+
+It also checks that there are no functions such as C<_black> and
+C<_white>, which an old bug defined and exported, and which emitted
+attribute codes (reset, bold, and so on) instead of colors.
 
 =head1 SOURCE AVAILABILITY
 
