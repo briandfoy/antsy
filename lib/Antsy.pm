@@ -791,9 +791,7 @@ sub iterm_attention ( $value ) {
 		return;
 		}
 
-	my $r = _osc_1337( "RequestAttention=$value" );
-	say _encode_seq( $r );
-	$r;
+	_osc_1337( "RequestAttention=$value" );
 	}
 sub iterm_bounce_dock_icon      { iterm_attention( 'yes' )  }
 sub iterm_bounce_dock_icon_once { iterm_attention( 'once' ) }
