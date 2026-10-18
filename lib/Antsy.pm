@@ -120,6 +120,11 @@ C<reset_all>, this leaves the text color and attributes alone.
 
 Make the text blink (however your terminal does that).
 
+=item * rapid_blink
+
+Make the text blink quickly (SGR 6). Few terminals support this; most
+treat it like C<blink> or ignore it. C<no_blink> turns off both.
+
 =item * bold
 
 Turn on bold
@@ -333,6 +338,10 @@ Turn off italic (SGR 23).
 
 Turn off reverse video (SGR 27).
 
+=item * no_strikethrough
+
+Turn off strikethrough (SGR 29).
+
 =item * no_underline
 
 Turn off underlining (SGR 24).
@@ -375,6 +384,11 @@ Scroll up N lines. See C<cursor_up> for how N works.
 =item * show_cursor
 
 Deprecated. Use C<cursor_show> instead.
+
+=item * strikethrough
+
+Draw a line through the text (SGR 9), which the standard calls
+"crossed-out".
 
 =item * text_256( N )
 
@@ -710,11 +724,13 @@ BEGIN {
 		[ qw( text    italic         m    3 ) ],
 		[ qw( text    underline      m    4 ) ],
 		[ qw( text    blink          m    5 ) ],
+		[ qw( text    rapid_blink    m    6 ) ],
 		[ qw( text    reverse        m    7 ) ],
 		[ qw( text    inverse        m    7 ) ],
 		[ qw( text    reverse_video  m    7 ) ],
 		[ qw( text    conceal        m    8 ) ],
 		[ qw( text    hidden         m    8 ) ],
+		[ qw( text    strikethrough  m    9 ) ],
 		[ qw( text    normal_intensity m 22 ) ],
 		[ qw( text    no_bold        m   22 ) ],
 		[ qw( text    no_dark        m   22 ) ],
@@ -727,6 +743,7 @@ BEGIN {
 		[ qw( text    no_inverse     m   27 ) ],
 		[ qw( text    no_reverse_video m 27 ) ],
 		[ qw( text    reveal         m   28 ) ],
+		[ qw( text    no_strikethrough m 29 ) ],
 		[ qw( text    text_default   m   39 ) ],
 		[ qw( bg      bg_default     m   49 ) ],
 		[ qw( cursor  hide_cursor    l  ?25 ) ],
