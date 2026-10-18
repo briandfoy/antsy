@@ -124,8 +124,24 @@ Nothing in this list is done yet.
     functions (which emitted SGR 0-7) are gone.
 * `examples/back_up_three_lines.pl` isn't in MANIFEST.
 
-## Ideas not done yet
+## To Do
 
 * Scroll regions: `scroll_region( TOP, BOTTOM )` (DECSTBM) and
   `scroll_region_reset`, maybe origin mode on and off.
 * Runtime deprecation warnings for the old cursor names.
+* Query the terminal's default colors with the standard xterm queries,
+  OSC 10 (text) and OSC 11 (background). The terminal answers on its
+  input with `OSC 10 ; rgb:RRRR/GGGG/BBBB ST` (components are usually 4
+  hex digits, sometimes 2), or not at all, so use a timeout.
+  * `text_color_request` and `bg_color_request`: the query sequences.
+  * `text_get_color()` and `bg_get_color()`: the round trip, built like
+    `cursor_get_position` (/dev/tty, raw mode, timeout, Term::ReadKey
+    loaded just in time). Return `( R, G, B )` scaled to 0-255, or the
+    empty list. Accept both BEL and `ESC \` as the terminator.
+  * A reply parser that's tested without a terminal.
+  * Maybe a fallback that reads `COLORFGBG` (palette numbers such as
+    `15;0`, set by rxvt and Konsole).
+* Fix `iterm_fg_color` and `iterm_bg_color`: `_iterm_query` has no
+  timeout, so it hangs if no answer comes, and it recognizes only BEL as
+  the end of the reply, not `ESC \`. Moving them onto the same code as
+  the color queries above would fix both.
