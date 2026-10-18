@@ -410,8 +410,8 @@ BEGIN {
 		[ qw( text    conceal        m    8 ) ],
 		[ qw( cursor  save_cursor    s      ) ],
 		[ qw( cursor  restore_cursor u      ) ],
-		[ qw( cursor  hide_cursor    h  ?25 ) ],
-		[ qw( cursor  show_cursor    l  ?25 ) ],
+		[ qw( cursor  hide_cursor    l  ?25 ) ],
+		[ qw( cursor  show_cursor    h  ?25 ) ],
 		);
 
 	foreach my $group ( @groups ) {
