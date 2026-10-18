@@ -1044,7 +1044,9 @@ sub iterm_linked_text ( $text, $url, $id = undef ) {
 	iterm_end_link();
 	}
 
-=item * set_cursor_shape( N )
+=item * iterm_set_cursor_shape( N )
+
+Change the cursor shape the iTerm2 way (C<OSC 1337 ; CursorShape=N ST>):
 
 =over 4
 
@@ -1096,6 +1098,8 @@ sub _iterm_set_cursor ( $n ) {
 
 	_osc_1337( "CursorShape=$n" );
 	}
+
+sub iterm_set_cursor_shape ( $n ) { _iterm_set_cursor( $n ) }
 
 sub iterm_set_block_cursor ()     { state $s = _iterm_set_cursor(0); $s }
 sub iterm_set_bar_cursor ()       { state $s = _iterm_set_cursor(1); $s }

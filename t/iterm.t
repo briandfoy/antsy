@@ -41,6 +41,22 @@ foreach my $name ( sort keys %shapes ) {
 		};
 	}
 
+subtest iterm_set_cursor_shape => sub {
+	foreach my $n ( 0 .. 2 ) {
+		my $output = run_perl( 'iTerm.app', "print Antsy::iterm_set_cursor_shape($n)" );
+		is( $output, "\e]1337;CursorShape=$n\007", "iterm_set_cursor_shape($n) in iTerm2" );
+		}
+
+	my $bad = run_perl( 'iTerm.app', 'print Antsy::iterm_set_cursor_shape(3) // q(UNDEF)' );
+	like( $bad, qr/\AThe cursor type can be 0, 1, or 2/, 'a bad shape warns' );
+	like( $bad, qr/UNDEF\z/, 'a bad shape returns nothing' );
+
+	my $other = run_perl( undef, 'print Antsy::iterm_set_cursor_shape(0) // q(UNDEF)' );
+	like( $other, qr/\AAntsy::iterm_set_cursor_shape only works in iTerm2 at /,
+		'outside iTerm2, it warns, naming itself' );
+	like( $other, qr/UNDEF\z/, 'outside iTerm2, it returns nothing' );
+	};
+
 done_testing();
 
 __END__
@@ -49,7 +65,7 @@ __END__
 
 =head1 NAME
 
-t/iterm.t - check that Antsy's iTerm2 cursor shape functions need iTerm2
+t/iterm.t - check Antsy's iTerm2 cursor shape functions
 
 =head1 SYNOPSIS
 
@@ -61,7 +77,9 @@ Checks that C<iterm_set_block_cursor>, C<iterm_set_bar_cursor>, and
 C<iterm_set_underline_cursor> return the cursor shape sequence when
 C<TERM_PROGRAM> says the terminal is iTerm2, and that anywhere else
 they warn (naming themselves) and return nothing, without an extra
-warning when C<TERM_PROGRAM> isn't set.
+warning when C<TERM_PROGRAM> isn't set. It checks the same for
+C<iterm_set_cursor_shape>, plus that it rejects a shape other than 0,
+1, or 2.
 
 These functions remember their first answer, so each case runs in a
 separate perl.
