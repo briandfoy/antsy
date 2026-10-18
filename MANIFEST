@@ -16,6 +16,7 @@ t/attributes.t
 t/colors.t
 t/cursor.t
 t/erase.t
+t/iterm.t
 t/load.t
 t/pod.t
 t/pod_coverage.t

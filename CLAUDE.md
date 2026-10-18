@@ -123,6 +123,7 @@ Nothing in this list is done yet.
 
 * Scroll regions: `scroll_region( TOP, BOTTOM )` (DECSTBM) and
   `scroll_region_reset`, maybe origin mode on and off.
-* The iTerm2 cursor shape functions don't check that they're running in
-  iTerm2, unlike the other iTerm2 functions.
+* The POD documents a `set_cursor_shape( N )` that doesn't exist; only
+  the private `_iterm_set_cursor` and the three `iterm_set_*_cursor`
+  functions do.
 * Runtime deprecation warnings for the old cursor names.

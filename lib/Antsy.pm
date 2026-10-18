@@ -1062,6 +1062,10 @@ sub iterm_linked_text ( $text, $url, $id = undef ) {
 
 =item * iterm_set_underline_cursor
 
+Change the cursor to a block, a vertical bar, or an underline. Like the
+other iTerm2 functions, these work only in iTerm2; anywhere else, they
+carp and return nothing.
+
 =cut
 
 sub _osc_1337 ( $content ) {
@@ -1081,7 +1085,16 @@ sub _iterm_set_cursor ( $n ) {
 		return;
 		}
 
-	OSC() . 1337 . ';' . "CursorShape=$n" . ST()
+	# Check here rather than leaving it to _osc_1337 so the warning
+	# names the public function (such as iterm_set_bar_cursor) instead
+	# of this one.
+	unless( _is_iterm() ) {
+		my $sub = ( caller(1) )[3];
+		carp( "$sub only works in iTerm2" );
+		return;
+		}
+
+	_osc_1337( "CursorShape=$n" );
 	}
 
 sub iterm_set_block_cursor ()     { state $s = _iterm_set_cursor(0); $s }

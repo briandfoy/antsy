@@ -1,4 +1,5 @@
 load.t
+iterm.t
 aliases.t
 attributes.t
 cursor.t
