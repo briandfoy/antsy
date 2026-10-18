@@ -14,6 +14,7 @@ my %moves = (
 	cursor_forward       => [ 'C', ''             ],
 	cursor_next_line     => [ 'E', $start_of_line ],
 	cursor_previous_line => [ 'F', $start_of_line ],
+	cursor_row           => [ 'd', "\e[1d"        ],
 	cursor_up            => [ 'A', ''             ],
 	scroll_down          => [ 'T', ''             ],
 	scroll_up            => [ 'S', ''             ],

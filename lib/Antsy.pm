@@ -157,6 +157,11 @@ Move the cursor down N positions.
 
 Move the cursor forward (right) N positions.
 
+=item * cursor_row( [ N ] )
+
+Move the cursor to row N, staying in the same column (VPA, C<CSI N d>).
+This is the vertical version of C<cursor_column>.
+
 =item * cursor_home
 
 Move the cursor to the top left corner of the screen. This is the same
@@ -191,8 +196,9 @@ For these and for C<scroll_down> and C<scroll_up>, N defaults to 1.
 Terminals treat a count of 0 as 1, so these never put a 0 in the
 sequence. Instead, an N of 0 returns the empty string, except that
 C<cursor_next_line(0)> and C<cursor_previous_line(0)> move to the start
-of the current line, and C<cursor_column(0)> moves to column 1. An N
-that isn't a non-negative integer counts as 0.
+of the current line, C<cursor_column(0)> moves to column 1, and
+C<cursor_row(0)> moves to row 1. An N that isn't a non-negative integer
+counts as 0.
 
 =item * dark
 
@@ -524,9 +530,10 @@ BEGIN {
 BEGIN {
 	# Terminals treat a count of 0 as 1, so a 0 can't go into the
 	# sequence. ZERO is what to return instead: nothing for the relative
-	# moves, and column 1 for the moves that also go to the start of a
-	# line.
+	# moves, column 1 for the moves that also go to the start of a line,
+	# and row 1 for the move to a row.
 	my $start_of_line = _seq( 'G', 1 );
+	my $first_row     = _seq( 'd', 1 );
 
 	my @groups = (
 		# EXPORT_TAG  FRAGMENT         COMMAND  ZERO
@@ -536,13 +543,14 @@ BEGIN {
 		[ 'cursor',   'forward',       'C',     ''             ],
 		[ 'cursor',   'next_line',     'E',     $start_of_line ],
 		[ 'cursor',   'previous_line', 'F',     $start_of_line ],
+		[ 'cursor',   'row',           'd',     $first_row     ],
 		[ 'cursor',   'up',            'A',     ''             ],
+		[ 'scroll',   'down',          'T',     ''             ],
+		[ 'scroll',   'up',            'S',     ''             ],
 		# aliases
 		[ 'cursor',   'left',          'D',     ''             ],
 		[ 'cursor',   'right',         'C',     ''             ],
 		[ 'cursor',   'prev_line',     'F',     $start_of_line ],
-		[ 'scroll',   'down',          'T',     ''             ],
-		[ 'scroll',   'up',            'S',     ''             ],
 		);
 
 	foreach my $group ( @groups ) {
