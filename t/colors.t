@@ -24,6 +24,30 @@ foreach my $name ( @names ) {
 		};
 	}
 
+subtest 'export tags' => sub {
+	my %in_tag;
+	foreach my $tag ( keys %Antsy::EXPORT_TAGS ) {
+		$in_tag{$tag}{$_}++ for $Antsy::EXPORT_TAGS{$tag}->@*;
+		}
+
+	foreach my $name ( @names ) {
+		my( $tag ) = $name =~ /\A(text|bg)_/;
+		ok( $in_tag{$tag}{$name}, "$name is in :$tag" );
+		ok( $in_tag{all}{$name},  "$name is in :all" );
+		next unless $name =~ /_bright_/;
+		ok( $in_tag{bright}{$name}, "$name is in :bright" );
+		}
+
+	ok( ! exists $Antsy::EXPORT_TAGS{'%s'}, 'there is no %s tag' );
+
+	my $text_red = eval q{
+		package Local::ImportText;
+		use Antsy qw(:text);
+		text_red();
+		};
+	is( $text_red, "\e[31m", 'importing :text provides text_red' );
+	};
+
 subtest 'no bare color names with a leading underscore' => sub {
 	foreach my $color ( @basic_colors ) {
 		my $name = "_$color";
@@ -53,6 +77,10 @@ C<text_bright_>, and C<bg_bright_> functions, and for each secondary
 color (orange), checks the C<text_> and C<bg_> functions. Each one must
 be defined, be listed in C<@EXPORT_OK>, and return an SGR escape
 sequence (C<CSI ... m>).
+
+It checks that each color is in the right export tag: C<:text> or
+C<:bg>, C<:all>, and C<:bright> for the bright colors, and that
+importing C<:text> really provides the text colors.
 
 It also checks that there are no functions such as C<_black> and
 C<_white>, which an old bug defined and exported, and which emitted

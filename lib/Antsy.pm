@@ -528,9 +528,9 @@ sub _erase ( $command, $n, @allowed ) {
 	}
 
 sub _export ( $name, $tag ) {
-	push @EXPORT_OK,             $name;
-	push $EXPORT_TAGS{all }->@*, $name;
-	push $EXPORT_TAGS{$tag}->@*, $name;
+	push @EXPORT_OK,              $name;
+	push $EXPORT_TAGS{'all'}->@*, $name;
+	push $EXPORT_TAGS{$tag}->@*,  $name;
 	}
 
 sub _rgb ( $i, $r, $g, $b ) {
@@ -774,7 +774,11 @@ BEGIN {
 			my $name = sprintf $template, $colors[$i];
 			my $value = _seq( 'm', $offset + $i );
 			*{$name} = sub () { $value };
-			_export( $name, $group->[1] );
+
+			# The tag is text or bg. The bright colors also go in their
+			# own bright tag.
+			_export( $name, $group->[0] );
+			push $EXPORT_TAGS{bright}->@*, $name if $group->[1] eq 'bright';
 			}
 		}
 
