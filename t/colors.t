@@ -1,0 +1,67 @@
+use utf8;
+use Test::More;
+
+my $class = 'Antsy';
+BAIL_OUT( "Bail out! $class did not compile\n" ) unless use_ok( $class );
+
+my @basic_colors = qw( black red green yellow blue magenta cyan white );
+my @extra_colors = qw( orange );
+
+my @names = (
+	( map { ( "text_$_", "bg_$_", "text_bright_$_", "bg_bright_$_" ) } @basic_colors ),
+	( map { ( "text_$_", "bg_$_" ) } @extra_colors ),
+	);
+
+my %exportable = map { $_ => 1 } @Antsy::EXPORT_OK;
+
+foreach my $name ( @names ) {
+	subtest $name => sub {
+		ok( defined &{"${class}::$name"}, "$name is defined" );
+		ok( $exportable{$name}, "$name is in \@EXPORT_OK" );
+
+		my $code = $class->can( $name ) or return;
+		like( $code->(), qr/\A\e\[[0-9;]+m\z/, "$name returns an SGR sequence" );
+		};
+	}
+
+done_testing();
+
+__END__
+
+=encoding utf8
+
+=head1 NAME
+
+t/colors.t - check that Antsy defines and exports every color function
+
+=head1 SYNOPSIS
+
+	prove -l t/colors.t
+
+=head1 DESCRIPTION
+
+For each of the eight basic colors, checks the C<text_>, C<bg_>,
+C<text_bright_>, and C<bg_bright_> functions, and for each secondary
+color (orange), checks the C<text_> and C<bg_> functions. Each one must
+be defined, be listed in C<@EXPORT_OK>, and return an SGR escape
+sequence (C<CSI ... m>).
+
+=head1 SOURCE AVAILABILITY
+
+This source is in GitHub:
+
+	https://github.com/briandfoy/antsy
+
+=head1 AUTHOR
+
+Claude Opus 5.5 (Anthropic), author
+
+brian d foy, C<< <briandfoy@pobox.com> >>, supervisor
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright © 2026, brian d foy C<< <briandfoy@pobox.com> >>. All rights reserved.
+
+You may redistribute this under the terms of the Artistic License 2.0.
+
+=cut
