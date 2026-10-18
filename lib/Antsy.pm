@@ -566,6 +566,64 @@ C<cursor_restore_state>.
 
 =back
 
+=head2 Changing the cursor shape
+
+These use the standard DECSCUSR sequence (C<CSI N SP q>), which works
+in xterm, iTerm2, kitty, Windows Terminal, the VTE terminals, tmux, and
+most others. iTerm2 also has its own way, C<iterm_set_cursor_shape>,
+which numbers the shapes differently.
+
+See the VT510 reference page for
+L<DECSCUSR|https://vt100.net/docs/vt510-rm/DECSCUSR.html>, which defines
+shapes 0 through 4, and
+L<XTerm Control Sequences|https://invisible-island.net/xterm/ctlseqs/ctlseqs.html>,
+which adds the bar shapes, 5 and 6.
+
+=over 4
+
+=item * cursor_shape( [ N ] )
+
+Set the cursor shape. N defaults to 0:
+
+=over 4
+
+=item * 0 - the terminal's default shape (usually a blinking block)
+
+=item * 1 - blinking block
+
+=item * 2 - steady block
+
+=item * 3 - blinking underline
+
+=item * 4 - steady underline
+
+=item * 5 - blinking bar
+
+=item * 6 - steady bar
+
+=back
+
+Any other value carps and returns the empty string.
+
+=item * cursor_shape_default
+
+=item * cursor_block_blinking
+
+=item * cursor_block
+
+=item * cursor_underline_blinking
+
+=item * cursor_underline
+
+=item * cursor_bar_blinking
+
+=item * cursor_bar
+
+Shortcuts for C<cursor_shape> with each argument, so you don't have to
+remember the numbers. For example, C<cursor_bar> is C<cursor_shape(6)>.
+
+=back
+
 =cut
 
 sub _256 ( $i, $n ) {
@@ -703,6 +761,7 @@ BEGIN {
 		erase_in_display erase_in_line cursor_row_column
 		cursor_position cursor_home cursor_line_start
 		cursor_position_request cursor_get_position
+		cursor_shape
 		);
 
 	push @EXPORT_OK, @subs;
@@ -854,6 +913,38 @@ BEGIN {
 			*{$name} = sub () { $value };
 			_export( $name, 'cursor' );
 			}
+		}
+	}
+
+# Changing the cursor shape with DECSCUSR (CSI N SP q). See "Changing
+# the cursor shape" in the docs.
+sub cursor_shape ( $n = 0 ) {
+	unless( grep { $n eq $_ } 0 .. 6 ) {
+		carp "Bad cursor shape <$n>. Should be one of <0 1 2 3 4 5 6>";
+		return '';
+		}
+	_seq( ' q', $n );
+	}
+
+# Named shortcuts for each cursor_shape argument.
+BEGIN {
+	my @helpers = (
+		# NAME                            SHAPE
+		[ qw( cursor_shape_default        0 ) ],
+		[ qw( cursor_block_blinking       1 ) ],
+		[ qw( cursor_block                2 ) ],
+		[ qw( cursor_underline_blinking   3 ) ],
+		[ qw( cursor_underline            4 ) ],
+		[ qw( cursor_bar_blinking         5 ) ],
+		[ qw( cursor_bar                  6 ) ],
+		);
+
+	foreach my $helper ( @helpers ) {
+		no strict 'refs';
+		my( $name, $n ) = @$helper;
+		my $value = cursor_shape( $n );
+		*{$name} = sub () { $value };
+		_export( $name, 'cursor' );
 		}
 	}
 
@@ -1057,6 +1148,10 @@ Change the cursor shape the iTerm2 way (C<OSC 1337 ; CursorShape=N ST>):
 =item * 2 Underline
 
 =back
+
+Any other N carps and returns nothing. These numbers aren't the same as
+the standard ones that C<cursor_shape> uses, which work in iTerm2 and
+most other terminals; see "Changing the cursor shape".
 
 =item * iterm_set_block_cursor
 

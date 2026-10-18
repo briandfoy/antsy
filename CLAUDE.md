@@ -49,6 +49,10 @@ excluded from the distribution (see MANIFEST.SKIP).
 * Cursor functions start with `cursor_`. The older `hide_cursor`,
   `show_cursor`, `save_cursor`, and `restore_cursor` are deprecated in
   the docs only; they still work.
+* The cursor shape has `cursor_shape(N)` (standard DECSCUSR, 0-6) and
+  named shortcuts such as `cursor_bar`. iTerm2's own
+  `iterm_set_cursor_shape(N)` numbers the shapes differently (0-2), so
+  don't mix them up.
 * Erasing has `erase_in_display(N)`, `erase_in_line(N)`, and named
   shortcuts such as `erase_to_end_of_screen`. The older `clear_*`
   constants emit the same sequences.
@@ -123,7 +127,4 @@ Nothing in this list is done yet.
 
 * Scroll regions: `scroll_region( TOP, BOTTOM )` (DECSTBM) and
   `scroll_region_reset`, maybe origin mode on and off.
-* The POD documents a `set_cursor_shape( N )` that doesn't exist; only
-  the private `_iterm_set_cursor` and the three `iterm_set_*_cursor`
-  functions do.
 * Runtime deprecation warnings for the old cursor names.

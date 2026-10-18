@@ -79,6 +79,14 @@ my %fixed = (
 	show_cursor       => "\e[?25h",
 	cursor_show       => "\e[?25h",
 	cursor_position_request => "\e[6n",
+	# cursor shapes (DECSCUSR)
+	cursor_shape_default      => "\e[0 q",
+	cursor_block_blinking     => "\e[1 q",
+	cursor_block              => "\e[2 q",
+	cursor_underline_blinking => "\e[3 q",
+	cursor_underline          => "\e[4 q",
+	cursor_bar_blinking       => "\e[5 q",
+	cursor_bar                => "\e[6 q",
 	);
 
 foreach my $name ( sort keys %fixed ) {
@@ -89,6 +97,22 @@ foreach my $name ( sort keys %fixed ) {
 		is( $code->(), $fixed{$name}, "$name returns the right sequence" );
 		};
 	}
+
+subtest cursor_shape => sub {
+	my $code = $class->can( 'cursor_shape' );
+	ok( defined $code, 'cursor_shape is defined' ) or return;
+	ok( $exportable{cursor_shape}, 'cursor_shape is in @EXPORT_OK' );
+
+	is( $code->(),   "\e[0 q",  'cursor_shape() defaults to 0' );
+	is( $code->($_), "\e[$_ q", "cursor_shape($_)" ) for 0 .. 6;
+
+	foreach my $bad ( -1, 7, 'x' ) {
+		my @warnings;
+		local $SIG{__WARN__} = sub { push @warnings, @_ };
+		is( $code->($bad), '', "cursor_shape($bad) returns the empty string" );
+		is( scalar @warnings, 1, "cursor_shape($bad) warns" );
+		}
+	};
 
 # cursor_get_position needs a real terminal to answer, so this checks
 # that it's exported and that the reply parser works.
@@ -131,6 +155,9 @@ C<cursor_line_start>, hiding and showing the cursor under both of
 their names (such as C<hide_cursor> and C<cursor_hide>), and every
 name for saving and restoring the cursor, both the DEC versions (such
 as C<cursor_save_state>) and the SCO versions (such as C<cursor_save>).
+
+It checks C<cursor_shape> for each shape, its default, and bad values,
+and each named shape such as C<cursor_bar>.
 
 C<cursor_get_position> needs a real terminal to answer, so the test
 only checks that it's exported and that its reply parser works.
