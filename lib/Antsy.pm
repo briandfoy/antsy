@@ -230,6 +230,28 @@ Hide the cursor. See also C<cursor_show>.
 
 Show the cursor. See also C<cursor_hide>.
 
+=item * cursor_position_request
+
+The sequence that asks the terminal where the cursor is (DSR 6,
+C<CSI 6n>). The terminal answers on its input, not its output, with
+C<CSI ROW ; COLUMN R>. Use this if you read the terminal yourself;
+otherwise use C<cursor_get_position>.
+
+=item * cursor_get_position( [ TIMEOUT ] )
+
+Ask the terminal where the cursor is, and return the row and column
+(both starting at 1):
+
+	my( $row, $column ) = cursor_get_position();
+
+This opens F</dev/tty>, puts it in raw mode, sends
+C<cursor_position_request>, and reads the answer, so it works only on
+Unix-like systems with a terminal. It waits up to TIMEOUT seconds
+(default 0.5) for each character, since some terminals never answer.
+It returns the empty list if it can't open the terminal, gets no
+answer, or can't understand it. It needs L<Term::ReadKey>, which it
+loads only when you call it.
+
 =item * dark
 
 Make the text dark (however your terminal does that).
@@ -607,6 +629,43 @@ sub cursor_position   ( $n = 1, $m = 1 ) { cursor_row_column( $n, $m ) }
 sub cursor_home       ()                 { cursor_row_column() }
 sub cursor_line_start ()                 { _seq( 'G', 1 ) }
 
+# Device Status Report 6 asks the terminal where the cursor is. The
+# terminal answers on its input with CSI ROW ; COLUMN R.
+sub cursor_position_request ()           { _seq( 'n', 6 ) }
+
+sub cursor_get_position ( $timeout = 0.5 ) {
+	state $have_readkey = eval { require Term::ReadKey };
+	unless( $have_readkey ) {
+		carp "cursor_get_position needs Term::ReadKey";
+		return;
+		}
+
+	open my $tty, '+<', '/dev/tty' or do {
+		carp "cursor_get_position couldn't open /dev/tty: $!";
+		return;
+		};
+	my $old = select $tty; $| = 1; select $old;
+
+	# Raw mode, so the reply isn't echoed and arrives without a newline.
+	# Some terminals never answer, so give up after $timeout seconds
+	# without a character.
+	Term::ReadKey::ReadMode( 'raw', $tty );
+	print { $tty } cursor_position_request();
+	my $reply = '';
+	while( defined( my $char = Term::ReadKey::ReadKey( $timeout, $tty ) ) ) {
+		$reply .= $char;
+		last if $char eq 'R';
+		}
+	Term::ReadKey::ReadMode( 'restore', $tty );
+
+	_parse_cursor_position_report( $reply );
+	}
+
+sub _parse_cursor_position_report ( $reply ) {
+	my( $row, $column ) = $reply =~ /\e\[(\d+);(\d+)R/ or return;
+	( $row, $column );
+	}
+
 sub erase_in_display ( $n = 0 ) { _erase( 'J', $n, 0 .. 3 ) }
 sub erase_in_line    ( $n = 0 ) { _erase( 'K', $n, 0 .. 2 ) }
 
@@ -643,6 +702,7 @@ BEGIN {
 	my @subs = qw( bg_256 bg_rgb text_256 text_rgb
 		erase_in_display erase_in_line cursor_row_column
 		cursor_position cursor_home cursor_line_start
+		cursor_position_request cursor_get_position
 		);
 
 	push @EXPORT_OK, @subs;

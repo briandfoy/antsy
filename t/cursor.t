@@ -78,6 +78,7 @@ my %fixed = (
 	cursor_hide       => "\e[?25l",
 	show_cursor       => "\e[?25h",
 	cursor_show       => "\e[?25h",
+	cursor_position_request => "\e[6n",
 	);
 
 foreach my $name ( sort keys %fixed ) {
@@ -88,6 +89,19 @@ foreach my $name ( sort keys %fixed ) {
 		is( $code->(), $fixed{$name}, "$name returns the right sequence" );
 		};
 	}
+
+# cursor_get_position needs a real terminal to answer, so this checks
+# that it's exported and that the reply parser works.
+subtest cursor_get_position => sub {
+	ok( defined &Antsy::cursor_get_position, 'cursor_get_position is defined' );
+	ok( $exportable{cursor_get_position}, 'cursor_get_position is in @EXPORT_OK' );
+
+	my $parse = \&Antsy::_parse_cursor_position_report;
+	is_deeply( [ $parse->( "\e[12;34R" ) ],    [ 12, 34 ], 'parses a reply' );
+	is_deeply( [ $parse->( "junk\e[1;1R" ) ],  [ 1, 1 ],   'ignores junk before the reply' );
+	is_deeply( [ $parse->( '' ) ],             [],         'no reply returns the empty list' );
+	is_deeply( [ $parse->( "\e[12;34" ) ],     [],         'a cut-off reply returns the empty list' );
+	};
 
 done_testing();
 
@@ -117,6 +131,9 @@ C<cursor_line_start>, hiding and showing the cursor under both of
 their names (such as C<hide_cursor> and C<cursor_hide>), and every
 name for saving and restoring the cursor, both the DEC versions (such
 as C<cursor_save_state>) and the SCO versions (such as C<cursor_save>).
+
+C<cursor_get_position> needs a real terminal to answer, so the test
+only checks that it's exported and that its reply parser works.
 
 =head1 SOURCE AVAILABILITY
 
