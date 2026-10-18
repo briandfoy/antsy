@@ -918,7 +918,7 @@ sub iterm_start_link ( $url, $id = undef ) {
 
 sub iterm_end_link () { OSC() . 8 . ';;' . ST() }
 
-sub iterm_linked_text ( $text, $url, $id ) {
+sub iterm_linked_text ( $text, $url, $id = undef ) {
 	iterm_start_link( $url, $id ) .
 	$text .
 	iterm_end_link();
