@@ -236,6 +236,13 @@ their arguments, so you don't have to remember the numbers. For
 example, C<erase_to_end_of_screen> is C<erase_in_display(0)> and
 C<erase_line> is C<erase_in_line(2)>.
 
+=item * dim
+
+=item * faint
+
+The same as C<dark> (SGR 2). The standard calls this "faint" (decreased
+intensity), and terminfo and many other tools call it "dim".
+
 =item * hide_cursor
 
 Hide the cursor. See also C<show_cursor>.
@@ -252,11 +259,15 @@ Turn off blinking (SGR 25).
 
 =item * no_dark
 
+=item * no_dim
+
+=item * no_faint
+
 =item * normal_intensity
 
-Turn off bold and dark (SGR 22). These are all the same: terminals have
-no way to turn off just one of bold and dark, so each of these turns
-off both.
+Turn off bold and dark (or faint) (SGR 22). These are all the same:
+terminals have no way to turn off just one of bold and dark, so each
+of these turns off both.
 
 Some terminals treat SGR 21 as "bold off", but the standard says SGR 21
 is double underline, so Antsy doesn't use it.
@@ -530,6 +541,8 @@ BEGIN {
 		[ qw( control reset          m    0 ) ],
 		[ qw( text    bold           m    1 ) ],
 		[ qw( text    dark           m    2 ) ],
+		[ qw( text    dim            m    2 ) ],
+		[ qw( text    faint          m    2 ) ],
 		[ qw( text    italic         m    3 ) ],
 		[ qw( text    underline      m    4 ) ],
 		[ qw( text    blink          m    5 ) ],
@@ -538,6 +551,8 @@ BEGIN {
 		[ qw( text    normal_intensity m 22 ) ],
 		[ qw( text    no_bold        m   22 ) ],
 		[ qw( text    no_dark        m   22 ) ],
+		[ qw( text    no_dim         m   22 ) ],
+		[ qw( text    no_faint       m   22 ) ],
 		[ qw( text    no_italic      m   23 ) ],
 		[ qw( text    no_underline   m   24 ) ],
 		[ qw( text    no_blink       m   25 ) ],
