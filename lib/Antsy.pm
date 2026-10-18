@@ -634,7 +634,7 @@ sub _iterm_set_cursor ( $n ) {
 		return;
 		}
 
-	OSC() . 1337 . ';' . "CursorShape=$n" . 'ST'
+	OSC() . 1337 . ';' . "CursorShape=$n" . ST()
 	}
 
 sub iterm_set_block_cursor ()     { state $s = _iterm_set_cursor(0); $s }
