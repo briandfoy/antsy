@@ -1,4 +1,5 @@
 load.t
+aliases.t
 attributes.t
 cursor.t
 erase.t
