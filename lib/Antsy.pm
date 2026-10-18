@@ -200,6 +200,22 @@ of the current line, C<cursor_column(0)> moves to column 1, and
 C<cursor_row(0)> moves to row 1. An N that isn't a non-negative integer
 counts as 0.
 
+=item * cursor_hide
+
+Hide the cursor. See also C<cursor_show>.
+
+=item * cursor_restore
+
+Put the cursor back to where you saved it. See also C<cursor_save>.
+
+=item * cursor_save
+
+Save the current location of the cursor. See also C<cursor_restore>.
+
+=item * cursor_show
+
+Show the cursor. See also C<cursor_hide>.
+
 =item * dark
 
 Make the text dark (however your terminal does that).
@@ -269,9 +285,7 @@ intensity), and terminfo and many other tools call it "dim".
 
 =item * hide_cursor
 
-=item * cursor_hide
-
-Hide the cursor. See also C<show_cursor>.
+Deprecated. Use C<cursor_hide> instead.
 
 =item * italic
 
@@ -316,9 +330,7 @@ Turn off all attributes
 
 =item * restore_cursor
 
-=item * cursor_restore
-
-Put the cursor back to where you saved it. See also C<save_cursor>.
+Deprecated. Use C<cursor_restore> instead.
 
 =item * reveal
 
@@ -331,9 +343,7 @@ for the background.
 
 =item * save_cursor
 
-=item * cursor_save
-
-Save the current location of the cursor. See also C<restore_cursor>.
+Deprecated. Use C<cursor_save> instead.
 
 =item * scroll_down( [ N ] )
 
@@ -345,9 +355,7 @@ Scroll up N lines. See C<cursor_up> for how N works.
 
 =item * show_cursor
 
-=item * cursor_show
-
-Show the cursor. See also C<hide_cursor>.
+Deprecated. Use C<cursor_show> instead.
 
 =item * text_256( N )
 
