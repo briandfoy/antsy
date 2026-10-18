@@ -132,27 +132,27 @@ current cursor position.
 
 Make the text invisible (if your terminal handles that).
 
-=item * cursor_back( N )
+=item * cursor_back( [ N ] )
 
 Move the cursor back N positions.
 
-=item * cursor_column( N )
+=item * cursor_column( [ N ] )
 
 Move the cursor to column N.
 
-=item * cursor_down( N )
+=item * cursor_down( [ N ] )
 
 Move the cursor down N positions.
 
-=item * cursor_forward( N )
+=item * cursor_forward( [ N ] )
 
 Move the cursor forward N positions.
 
-=item * cursor_next_line( N )
+=item * cursor_next_line( [ N ] )
 
 Move the cursor down N lines, to the start of the line
 
-=item * cursor_previous_line( N )
+=item * cursor_previous_line( [ N ] )
 
 Move the cursor up N lines, to the start of the line
 
@@ -160,9 +160,16 @@ Move the cursor up N lines, to the start of the line
 
 Move the cursor to row N and column M.
 
-=item * cursor_up
+=item * cursor_up( [ N ] )
 
-TK: Fill in details
+Move the cursor up N lines.
+
+For these and for C<scroll_down> and C<scroll_up>, N defaults to 1.
+Terminals treat a count of 0 as 1, so these never put a 0 in the
+sequence. Instead, an N of 0 returns the empty string, except that
+C<cursor_next_line(0)> and C<cursor_previous_line(0)> move to the start
+of the current line, and C<cursor_column(0)> moves to column 1. An N
+that isn't a non-negative integer counts as 0.
 
 =item * dark
 
@@ -249,13 +256,13 @@ for the background.
 
 Save the current location of the cursor. See also C<save_cursor>.
 
-=item * scroll_down( N )
+=item * scroll_down( [ N ] )
 
-Scroll down N lines.
+Scroll down N lines. See C<cursor_up> for how N works.
 
-=item * scroll_up( N )
+=item * scroll_up( [ N ] )
 
-Scroll up N lines.
+Scroll up N lines. See C<cursor_up> for how N works.
 
 =item * show_cursor
 
@@ -447,26 +454,34 @@ BEGIN {
 	}
 
 BEGIN {
+	# Terminals treat a count of 0 as 1, so a 0 can't go into the
+	# sequence. ZERO is what to return instead: nothing for the relative
+	# moves, and column 1 for the moves that also go to the start of a
+	# line.
+	my $start_of_line = _seq( 'G', 1 );
+
 	my @groups = (
-		[ qw( cursor back           D ) ],
-		[ qw( cursor column         G ) ],
-		[ qw( cursor down           B ) ],
-		[ qw( cursor forward        C ) ],
-		[ qw( cursor next_line      E ) ],
-		[ qw( cursor previous_line  F ) ],
-		[ qw( cursor up             A ) ],
-		[ qw( scroll down           T ) ],
-		[ qw( scroll up             S ) ],
+		# EXPORT_TAG  FRAGMENT         COMMAND  ZERO
+		[ 'cursor',   'back',          'D',     ''             ],
+		[ 'cursor',   'column',        'G',     $start_of_line ],
+		[ 'cursor',   'down',          'B',     ''             ],
+		[ 'cursor',   'forward',       'C',     ''             ],
+		[ 'cursor',   'next_line',     'E',     $start_of_line ],
+		[ 'cursor',   'previous_line', 'F',     $start_of_line ],
+		[ 'cursor',   'up',            'A',     ''             ],
+		[ 'scroll',   'down',          'T',     ''             ],
+		[ 'scroll',   'up',            'S',     ''             ],
 		);
 
 	foreach my $group ( @groups ) {
 		no strict 'refs';
 
-		my( $export_tag, $fragment, $command ) = @$group;
+		my( $export_tag, $fragment, $command, $zero ) = @$group;
 		my $name = join '_', $export_tag, $fragment;
 
-		*{$name} = sub ( $n ) {
+		*{$name} = sub ( $n = 1 ) {
 			$n = $n =~ /\A([0-9]+)\z/ ? $1 : 0;
+			return $zero if $n == 0;
 			_seq( $command, $n );
 			};
 

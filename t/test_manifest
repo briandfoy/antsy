@@ -1,4 +1,5 @@
 load.t
+cursor.t
 erase.t
 colors.t
 pod.t

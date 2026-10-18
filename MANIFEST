@@ -11,6 +11,7 @@ MANIFEST.SKIP
 README.pod
 SECURITY.md
 t/colors.t
+t/cursor.t
 t/erase.t
 t/load.t
 t/pod.t
