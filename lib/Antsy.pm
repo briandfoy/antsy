@@ -23,7 +23,7 @@ Antsy - Streaming ANSI escape sequences
 
 	use Antsy qw(:all);
 
-	print bold, underline, text_red, "Hello", reset;
+	print bold, underline, text_red, "Hello", reset_all;
 
 =head1 DESCRIPTION
 
@@ -108,7 +108,7 @@ does that).
 =item * bg_default
 
 Go back to the terminal's default background color (SGR 49). Unlike
-C<reset>, this leaves the text color and attributes alone.
+C<reset_all>, this leaves the text color and attributes alone.
 
 =item * blink
 
@@ -287,6 +287,14 @@ intensity), and terminfo and many other tools call it "dim".
 
 Deprecated. Use C<cursor_hide> instead.
 
+=item * inverse
+
+=item * reverse_video
+
+Use the background color for the text color, and the text color
+for the background (SGR 7). Use these instead of C<reverse>, which
+Antsy can't export.
+
 =item * italic
 
 Turn on italic.
@@ -316,7 +324,11 @@ is double underline, so Antsy doesn't use it.
 
 Turn off italic (SGR 23).
 
+=item * no_inverse
+
 =item * no_reverse
+
+=item * no_reverse_video
 
 Turn off reverse video (SGR 27).
 
@@ -324,9 +336,20 @@ Turn off reverse video (SGR 27).
 
 Turn off underlining (SGR 24).
 
+=item * normal
+
+=item * reset_all
+
+Turn off all attributes and go back to the default colors (SGR 0).
+C<normal> is not the same as C<normal_intensity>, which only turns off
+bold and dark.
+
 =item * reset
 
-Turn off all attributes
+The same as C<reset_all>, but Antsy can't export it. Importing a sub
+named C<reset> would replace Perl's built-in C<reset> in your program,
+so it isn't in C<@EXPORT_OK> or any export tag. Use C<reset_all> or
+C<normal>, or call it with its full name, C<Antsy::reset()>.
 
 =item * restore_cursor
 
@@ -338,8 +361,11 @@ Show text hidden by C<conceal> (SGR 28).
 
 =item * reverse
 
-Use the background color for the text color, and the text color
-for the background.
+The same as C<inverse>, but Antsy can't export it. Importing a sub
+named C<reverse> would replace Perl's built-in C<reverse> in your
+program, so C<reverse @list> would stop working. It isn't in
+C<@EXPORT_OK> or any export tag. Use C<inverse> or C<reverse_video>,
+or call it with its full name, C<Antsy::reverse()>.
 
 =item * save_cursor
 
@@ -406,8 +432,8 @@ does that).
 
 =item * text_default
 
-Go back to the terminal's default text color (SGR 39). Unlike C<reset>,
-this leaves the background color and attributes alone.
+Go back to the terminal's default text color (SGR 39). Unlike
+C<reset_all>, this leaves the background color and attributes alone.
 
 =item * underline
 
@@ -586,9 +612,16 @@ BEGIN {
 	}
 
 BEGIN {
+	# Importing a sub with the same name as a Perl builtin replaces that
+	# builtin in the importing package (for example, reverse @list would
+	# call Antsy::reverse). Define these, but never export them.
+	my %shadows_builtin = map { $_ => 1 } qw( reset reverse );
+
 	my @groups = (
 		# EXPORT_TAG  SUB_NAME  COMMAND ARGS
 		[ qw( control reset          m    0 ) ],
+		[ qw( control reset_all      m    0 ) ],
+		[ qw( control normal         m    0 ) ],
 		[ qw( text    bold           m    1 ) ],
 		[ qw( text    dark           m    2 ) ],
 		[ qw( text    dim            m    2 ) ],
@@ -597,6 +630,8 @@ BEGIN {
 		[ qw( text    underline      m    4 ) ],
 		[ qw( text    blink          m    5 ) ],
 		[ qw( text    reverse        m    7 ) ],
+		[ qw( text    inverse        m    7 ) ],
+		[ qw( text    reverse_video  m    7 ) ],
 		[ qw( text    conceal        m    8 ) ],
 		[ qw( text    normal_intensity m 22 ) ],
 		[ qw( text    no_bold        m   22 ) ],
@@ -607,6 +642,8 @@ BEGIN {
 		[ qw( text    no_underline   m   24 ) ],
 		[ qw( text    no_blink       m   25 ) ],
 		[ qw( text    no_reverse     m   27 ) ],
+		[ qw( text    no_inverse     m   27 ) ],
+		[ qw( text    no_reverse_video m 27 ) ],
 		[ qw( text    reveal         m   28 ) ],
 		[ qw( text    text_default   m   39 ) ],
 		[ qw( bg      bg_default     m   49 ) ],
@@ -629,7 +666,7 @@ BEGIN {
 
 		*{$name} = sub () { $value };
 
-		_export( $name, $export_tag );
+		_export( $name, $export_tag ) unless $shadows_builtin{$name};
 		}
 	}
 
