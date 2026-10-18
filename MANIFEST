@@ -2,6 +2,7 @@ Changes
 examples/fg_bg_colors.pl
 examples/fireworks.pl
 examples/query.pl
+examples/subtasks.pl
 INSTALL.SKIP
 lib/Antsy.pm
 LICENSE
