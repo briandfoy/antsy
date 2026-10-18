@@ -56,6 +56,14 @@ foreach my $name ( qw( cursor_row_column cursor_position ) ) {
 my %fixed = (
 	cursor_home       => "\e[1;1H",
 	cursor_line_start => $start_of_line,
+	save_cursor       => "\e[s",
+	cursor_save       => "\e[s",
+	restore_cursor    => "\e[u",
+	cursor_restore    => "\e[u",
+	hide_cursor       => "\e[?25l",
+	cursor_hide       => "\e[?25l",
+	show_cursor       => "\e[?25h",
+	cursor_show       => "\e[?25h",
 	);
 
 foreach my $name ( sort keys %fixed ) {
@@ -90,8 +98,10 @@ returns the right sequence for several counts, and that a count of 0
 sequence, because terminals treat that as 1.
 
 Also checks the absolute moves C<cursor_row_column> and
-C<cursor_position>, and the fixed moves C<cursor_home> and
-C<cursor_line_start>.
+C<cursor_position>, the fixed moves C<cursor_home> and
+C<cursor_line_start>, and saving, restoring, hiding, and showing the
+cursor under both of their names (such as C<hide_cursor> and
+C<cursor_hide>).
 
 =head1 SOURCE AVAILABILITY
 

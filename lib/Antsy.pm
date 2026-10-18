@@ -269,6 +269,8 @@ intensity), and terminfo and many other tools call it "dim".
 
 =item * hide_cursor
 
+=item * cursor_hide
+
 Hide the cursor. See also C<show_cursor>.
 
 =item * italic
@@ -314,6 +316,8 @@ Turn off all attributes
 
 =item * restore_cursor
 
+=item * cursor_restore
+
 Put the cursor back to where you saved it. See also C<save_cursor>.
 
 =item * reveal
@@ -327,7 +331,9 @@ for the background.
 
 =item * save_cursor
 
-Save the current location of the cursor. See also C<save_cursor>.
+=item * cursor_save
+
+Save the current location of the cursor. See also C<restore_cursor>.
 
 =item * scroll_down( [ N ] )
 
@@ -338,6 +344,8 @@ Scroll down N lines. See C<cursor_up> for how N works.
 Scroll up N lines. See C<cursor_up> for how N works.
 
 =item * show_cursor
+
+=item * cursor_show
 
 Show the cursor. See also C<hide_cursor>.
 
@@ -598,6 +606,10 @@ BEGIN {
 		[ qw( cursor  restore_cursor u      ) ],
 		[ qw( cursor  hide_cursor    l  ?25 ) ],
 		[ qw( cursor  show_cursor    h  ?25 ) ],
+		[ qw( cursor  cursor_save    s      ) ],
+		[ qw( cursor  cursor_restore u      ) ],
+		[ qw( cursor  cursor_hide    l  ?25 ) ],
+		[ qw( cursor  cursor_show    h  ?25 ) ],
 		);
 
 	foreach my $group ( @groups ) {
