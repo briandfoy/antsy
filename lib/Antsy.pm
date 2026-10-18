@@ -459,14 +459,18 @@ BEGIN {
 	foreach my $tuple ( @secondary_colors ) {
 		no strict 'refs';
 		my( $color, $rgb ) = $tuple->@*;
-		my $name = "text_$color";
-		my $value = text_rgb( $rgb->@* );
-		*{$name} = sub () { $value };
-		_export( $name, 'text' );
 
-		$name = "bg_$color";
-		$value = bg_rgb( $rgb->@* );
-		_export( $name, 'bg' );
+		# Each sub needs its own variable to close over. If they shared
+		# one, reassigning it would change what the other returns.
+		my $text_name  = "text_$color";
+		my $text_value = text_rgb( $rgb->@* );
+		*{$text_name} = sub () { $text_value };
+		_export( $text_name, 'text' );
+
+		my $bg_name  = "bg_$color";
+		my $bg_value = bg_rgb( $rgb->@* );
+		*{$bg_name} = sub () { $bg_value };
+		_export( $bg_name, 'bg' );
 		}
 	}
 
