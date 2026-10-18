@@ -22,6 +22,10 @@ excluded from the distribution (see MANIFEST.SKIP).
   `use experimental qw(signatures);`. Tests don't use signatures.
 * Leave README.pod and Makefile.PL alone unless asked. README.pod likely
   comes from a template, and Makefile.PL is a modulino.
+* Don't declare Term::ReadKey as a prerequisite. `cursor_get_position`
+  and the iTerm2 queries load it just in time, only when called.
+  (`cursor_get_position` carps and returns the empty list if it's
+  missing; the iTerm2 query's `require` dies.)
 * `cpan_tester_reports/` is brian's working directory for downloaded
   CPAN Testers reports. It's in MANIFEST.SKIP. Don't touch it.
 
@@ -119,9 +123,6 @@ Nothing in this list is done yet.
   * The `%s` export tag and the stray `_black` through `_white`
     functions (which emitted SGR 0-7) are gone.
 * `examples/back_up_three_lines.pl` isn't in MANIFEST.
-* `cursor_get_position` and the iTerm2 queries load Term::ReadKey at
-  run time, but it isn't in PREREQ_PM. Decide whether to declare it
-  (perhaps as a recommendation).
 
 ## Ideas not done yet
 
