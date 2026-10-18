@@ -115,6 +115,9 @@ Nothing in this list is done yet.
   * The `%s` export tag and the stray `_black` through `_white`
     functions (which emitted SGR 0-7) are gone.
 * `examples/back_up_three_lines.pl` isn't in MANIFEST.
+* `cursor_get_position` and the iTerm2 queries load Term::ReadKey at
+  run time, but it isn't in PREREQ_PM. Decide whether to declare it
+  (perhaps as a recommendation).
 
 ## Ideas not done yet
 
@@ -123,5 +126,3 @@ Nothing in this list is done yet.
 * The iTerm2 cursor shape functions don't check that they're running in
   iTerm2, unlike the other iTerm2 functions.
 * Runtime deprecation warnings for the old cursor names.
-* Strikethrough (SGR 9/29), rapid blink (SGR 6), tab movement (CHT,
-  CBT), and a cursor position query (CSI 6n).
