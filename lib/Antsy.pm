@@ -296,10 +296,6 @@ This dies if N is not a positive number between 0 and 255 (inclusive).
 
 Make foreground text the named color.
 
-=item * text_blink
-
-Make the text blink.
-
 =item * text_bright_black
 
 =item * text_bright_blue
@@ -318,10 +314,6 @@ Make the text blink.
 
 Make foreground text the named color and bright (however your terminal
 does that).
-
-=item * text_concealed
-
-Conceal the text.
 
 =item * underline
 
