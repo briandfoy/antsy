@@ -585,7 +585,7 @@ OSC 8 ; [params] ; [url] ST id is only param
 =cut
 
 sub iterm_start_link ( $url, $id = undef ) {
-	$id = defined $id ? 'id=$id' : '';
+	$id = defined $id ? "id=$id" : '';
 	OSC() . 8 . ';' . $id . ';' . $url . ST();
 	}
 
