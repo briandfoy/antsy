@@ -139,7 +139,9 @@ Make the text invisible (if your terminal handles that).
 
 =item * cursor_back( [ N ] )
 
-Move the cursor back N positions.
+=item * cursor_left( [ N ] )
+
+Move the cursor back (left) N positions.
 
 =item * cursor_column( [ N ] )
 
@@ -151,7 +153,19 @@ Move the cursor down N positions.
 
 =item * cursor_forward( [ N ] )
 
-Move the cursor forward N positions.
+=item * cursor_right( [ N ] )
+
+Move the cursor forward (right) N positions.
+
+=item * cursor_home
+
+Move the cursor to the top left corner of the screen. This is the same
+as C<cursor_row_column()> with no arguments.
+
+=item * cursor_line_start
+
+Move the cursor to the start of the current line. This is the same as
+C<cursor_column(1)>.
 
 =item * cursor_next_line( [ N ] )
 
@@ -159,11 +173,15 @@ Move the cursor down N lines, to the start of the line
 
 =item * cursor_previous_line( [ N ] )
 
+=item * cursor_prev_line( [ N ] )
+
 Move the cursor up N lines, to the start of the line
 
-=item * cursor_row_column( N, M )
+=item * cursor_row_column( [ N, M ] )
 
-Move the cursor to row N and column M.
+=item * cursor_position( [ N, M ] )
+
+Move the cursor to row N and column M. Both default to 1.
 
 =item * cursor_up( [ N ] )
 
@@ -434,6 +452,9 @@ sub bg_256   ( $n         ) { _256( _bg(), $n ) }
 sub bg_rgb   ( $r, $g, $b ) { _rgb( _bg(), $r, $g, $b ) }
 
 sub cursor_row_column ( $n = 1, $m = 1 ) { _seq( 'H', $n, $m ) }
+sub cursor_position   ( $n = 1, $m = 1 ) { cursor_row_column( $n, $m ) }
+sub cursor_home       ()                 { cursor_row_column() }
+sub cursor_line_start ()                 { _seq( 'G', 1 ) }
 
 sub erase_in_display ( $n = 0 ) { _erase( 'J', $n, 0 .. 3 ) }
 sub erase_in_line    ( $n = 0 ) { _erase( 'K', $n, 0 .. 2 ) }
@@ -470,6 +491,7 @@ sub text_rgb ( $r, $g, $b ) { _rgb( _text(), $r, $g, $b ) }
 BEGIN {
 	my @subs = qw( bg_256 bg_rgb text_256 text_rgb
 		erase_in_display erase_in_line cursor_row_column
+		cursor_position cursor_home cursor_line_start
 		);
 
 	push @EXPORT_OK, @subs;
@@ -515,6 +537,10 @@ BEGIN {
 		[ 'cursor',   'next_line',     'E',     $start_of_line ],
 		[ 'cursor',   'previous_line', 'F',     $start_of_line ],
 		[ 'cursor',   'up',            'A',     ''             ],
+		# aliases
+		[ 'cursor',   'left',          'D',     ''             ],
+		[ 'cursor',   'right',         'C',     ''             ],
+		[ 'cursor',   'prev_line',     'F',     $start_of_line ],
 		[ 'scroll',   'down',          'T',     ''             ],
 		[ 'scroll',   'up',            'S',     ''             ],
 		);

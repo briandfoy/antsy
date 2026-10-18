@@ -17,6 +17,10 @@ my %moves = (
 	cursor_up            => [ 'A', ''             ],
 	scroll_down          => [ 'T', ''             ],
 	scroll_up            => [ 'S', ''             ],
+	# aliases
+	cursor_left          => [ 'D', ''             ],
+	cursor_right         => [ 'C', ''             ],
+	cursor_prev_line     => [ 'F', $start_of_line ],
 	);
 
 my %exportable = map { $_ => 1 } @Antsy::EXPORT_OK;
@@ -33,6 +37,32 @@ foreach my $name ( sort keys %moves ) {
 		is( $code->($_), "\e[$_$command", "$name($_)" ) for 1, 3, 12;
 		is( $code->(0),  $zero,           "$name(0) never emits a count of 0" );
 		is( $code->($_), $zero,           "$name('$_') counts as 0" ) for -2, 'x', 1.5;
+		};
+	}
+
+foreach my $name ( qw( cursor_row_column cursor_position ) ) {
+	subtest $name => sub {
+		my $code = $class->can( $name );
+		ok( defined $code, "$name is defined" ) or return;
+		ok( $exportable{$name}, "$name is in \@EXPORT_OK" );
+
+		is( $code->(),       "\e[1;1H",  "$name() defaults to 1, 1" );
+		is( $code->(5),      "\e[5;1H",  "$name(5) defaults the column to 1" );
+		is( $code->(5, 10),  "\e[5;10H", "$name(5, 10)" );
+		};
+	}
+
+my %fixed = (
+	cursor_home       => "\e[1;1H",
+	cursor_line_start => $start_of_line,
+	);
+
+foreach my $name ( sort keys %fixed ) {
+	subtest $name => sub {
+		my $code = $class->can( $name );
+		ok( defined $code, "$name is defined" ) or return;
+		ok( $exportable{$name}, "$name is in \@EXPORT_OK" );
+		is( $code->(), $fixed{$name}, "$name returns the right sequence" );
 		};
 	}
 
@@ -57,6 +87,10 @@ it's defined and exportable, that the count defaults to 1, that it
 returns the right sequence for several counts, and that a count of 0
 (or anything that isn't a non-negative integer) never puts a 0 in the
 sequence, because terminals treat that as 1.
+
+Also checks the absolute moves C<cursor_row_column> and
+C<cursor_position>, and the fixed moves C<cursor_home> and
+C<cursor_line_start>.
 
 =head1 SOURCE AVAILABILITY
 
