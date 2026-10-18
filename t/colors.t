@@ -68,7 +68,7 @@ t/colors.t - check that Antsy defines and exports every color function
 
 =head1 SYNOPSIS
 
-	prove -l t/colors.t
+	$ prove -l t/colors.t
 
 =head1 DESCRIPTION
 

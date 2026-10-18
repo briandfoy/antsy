@@ -80,7 +80,7 @@ t/attributes.t - check Antsy's text attribute functions
 
 =head1 SYNOPSIS
 
-	prove -l t/attributes.t
+	$ prove -l t/attributes.t
 
 =head1 DESCRIPTION
 

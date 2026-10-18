@@ -102,7 +102,7 @@ t/aliases.t - check that Antsy's aliases return the same thing
 
 =head1 SYNOPSIS
 
-	prove -l t/aliases.t
+	$ prove -l t/aliases.t
 
 =head1 DESCRIPTION
 

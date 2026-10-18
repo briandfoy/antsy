@@ -99,7 +99,7 @@ t/cursor.t - check Antsy's counted cursor and scroll moves
 
 =head1 SYNOPSIS
 
-	prove -l t/cursor.t
+	$ prove -l t/cursor.t
 
 =head1 DESCRIPTION
 

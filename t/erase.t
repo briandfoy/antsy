@@ -63,7 +63,7 @@ t/erase.t - check Antsy's erase functions
 
 =head1 SYNOPSIS
 
-	prove -l t/erase.t
+	$ prove -l t/erase.t
 
 =head1 DESCRIPTION
 
