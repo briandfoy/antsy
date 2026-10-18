@@ -969,7 +969,7 @@ may be 2 or 4 digits in each component.
 sub _iterm_id { 'iTerm.app' }
 
 sub _is_term_type ( $id ) {
-	$ENV{TERM_PROGRAM} =~ m/\A\Q$id\E\z/;
+	( $ENV{TERM_PROGRAM} // '' ) =~ m/\A\Q$id\E\z/;
 	}
 
 sub _is_iterm { _is_term_type( _iterm_id() ) }
