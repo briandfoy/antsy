@@ -1,6 +1,11 @@
 use utf8;
 use Test::More;
 
+# Only run these in iTerm2 on macOS.
+unless( $^O eq 'darwin' and ( $ENV{TERM_PROGRAM} // '' ) eq 'iTerm.app' ) {
+	plan skip_all => 'these tests run only in iTerm2 on macOS';
+	}
+
 my $class = 'Antsy';
 BAIL_OUT( "Bail out! $class did not compile\n" ) unless use_ok( $class );
 
@@ -83,6 +88,9 @@ C<iterm_set_cursor_shape>, plus that it rejects a shape other than 0,
 
 These functions remember their first answer, so each case runs in a
 separate perl.
+
+The whole file is skipped unless it runs on macOS in iTerm2 (when
+C<TERM_PROGRAM> is C<iTerm.app>).
 
 =head1 SOURCE AVAILABILITY
 
