@@ -1,4 +1,3 @@
-
 #!start included /usr/local/perls/perl-5.32.0/lib/5.32.0/ExtUtils/MANIFEST.SKIP
 # Avoid version control files.
 \bRCS\b
@@ -90,9 +89,12 @@ nytprof
 \A\.github\b
 \.gitattributes\b
 
-.downstream.json
+^\.downstream\.json
 
-.downstream.json
-cpan_tester_reports
+^cpan_tester_reports/
 \ACLAUDE\.md\z
-.claude/
+^\.claude/
+^AGENTS\.md
+^CLAUDE\.md
+^\.claude
+^cpan_testers_reports/
